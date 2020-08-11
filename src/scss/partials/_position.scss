@@ -1,0 +1,22 @@
+$positions: (
+  'absolute': absolute,
+  'relative': relative,
+  'fixed': fixed,
+);
+@mixin createPosition($className) {
+  @each $key, $val in $positions {
+    .#{$className}-#{$key} {
+      position: $val !important;
+    }
+  }
+}
+@include createPosition('position');
+
+@mixin all-mode-position($list, $className) {
+  @each $key, $val in $list {
+    @media screen and (min-width: $val) {
+      @include createPosition(#{$className}-#{$key});
+    }
+  }
+}
+// @include all-mode-position($grids, "position");

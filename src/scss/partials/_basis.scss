@@ -1,0 +1,112 @@
+$browsers_prefix: (-webkit-, -moz-, -ms-, -o-, -khtml-);
+
+//------grids------------
+$grids: (
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+);
+@import "position.scss";
+@import "spacing.scss";
+@import "colors.scss";
+@import "font.scss";
+
+//------------width-------
+// $max-width: 375px;
+// $min-width: 320px;
+
+//-------------@mixins-------------------
+@mixin all_prefix($prop, $val) {
+  @each $p in $browsers_prefix {
+    #{$p}#{$prop}: $val;
+  }
+  #{$prop}: $val;
+}
+
+@mixin border-radius($tr: 0px, $br: 0px, $tl: 0px, $bl: 0px) {
+  -webkit-border-top-right-radius: $tr;
+  -moz-border-radius-topright: $tr;
+  border-top-right-radius: $tr;
+
+  -webkit-border-bottom-right-radius: $br;
+  -moz-border-radius-bottomright: $br;
+  border-bottom-right-radius: $br;
+
+  -webkit-border-top-left-radius: $tl;
+  -moz-border-radius-topleft: $tl;
+  border-top-left-radius: $tl;
+
+  -webkit-border-bottom-left-radius: $bl;
+  -moz-border-radius-bottomleft: $bl;
+  border-bottom-left-radius: $bl;
+}
+
+@mixin opacity($op) {
+  /* IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$op*100})";
+
+  /* IE 5-7 */
+  filter: alpha(opacity=($op * 100));
+
+  // the rest
+  @include all_prefix(opacity, $op);
+}
+
+//----------user select--------
+// $state:(
+//   all:all,
+//   none:none,
+//   auto:auto
+// );
+// @mixin select_deselect($class_name,$list){
+//   @each $key,$val in $list{
+//     .#{$class_name}-#{$key}{
+//       -webkit-user-select: $val;  /* Chrome 49+ */
+//       -moz-user-select: $val;     /* Firefox 43+ */
+//       -ms-user-select: $val;      /* No support yet */
+//       user-select: $val;          /* Likely future */
+//     }
+//   }
+// }
+// @include select_deselect(select,$state);
+
+// @mixin all-mode-select($gridList){
+//   @each $key,$val in $gridList{
+//     @media screen and (min-width: $val){
+//       @include select_deselect(select-#{$key},$state);
+//     }
+//   }
+// }
+
+// @include all-mode-select($grids);
+//-------------------------
+@mixin all_keyframes($anim_name) {
+  // @each $p in $browsers_prefix{
+  //   @#{$p}keyframes #{$anim_name}{
+  //     @content;
+  //   }
+  // }
+  // @keyframes #{$anim_name} {
+  //   @content;
+  // }
+
+  @-webkit-keyframes #{$anim_name} {
+    @content;
+  }
+  @-moz-keyframes #{$anim_name} {
+    @content;
+  }
+  @-o-keyframes #{$anim_name} {
+    @content;
+  }
+  @keyframes #{$anim_name} {
+    @content;
+  }
+}
+// @include all_keyframes(myName){
+//   0%{ opacity: 0; };
+//   100%{ opacity: 1; };
+// }
+
+// @import "animations.scss";

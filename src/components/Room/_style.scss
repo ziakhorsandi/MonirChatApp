@@ -1,0 +1,159 @@
+$cl-1: #4ecdc4;
+$cl-2: #1a535c;
+
+// INIT
+$h-bor-rad: 21px;
+$f-bor-rad: 21px;
+$header-height: 70px;
+$footer-height: 60px;
+
+.room {
+  min-width: 320px;
+  &__context {
+    // margin-top: $header-height;
+    padding-top: $header-height + 40px;
+    margin-bottom: $footer-height + 20px;
+  }
+}
+.header {
+  height: $header-height;
+  color: map-get($colors, cl-6);
+  z-index: 1;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  &__container {
+    background-color: $cl-1;
+    border-bottom-left-radius: $h-bor-rad;
+    border-bottom-right-radius: $h-bor-rad;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 21px;
+    background-color: #fff;
+
+    display: flex;
+    justify-content: center;
+    align-items: middle;
+    span {
+      width: 100%;
+      height: 100%;
+    }
+    svg {
+      width: 35px;
+    }
+  }
+
+  &__txt {
+    @include main-font();
+    font-weight: 800;
+    font-size: 20px;
+  }
+  &__logo {
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+  }
+  &__line {
+    background-color: $cl-2;
+    // opacity: 24%;
+    border-radius: $h-bor-rad;
+    position: absolute;
+    bottom: -5%;
+    height: 20px;
+    left: 3%;
+    right: 3%;
+    @media screen and (min-width: map-get($grids, md )) {
+      left: 2.5%;
+      right: 2.5%;
+    }
+    @media screen and (min-width: map-get($grids, lg )) {
+      left: 2%;
+      right: 2%;
+    }
+    @media screen and (min-width: map-get($grids, xl )) {
+      left: 1%;
+      right: 1%;
+    }
+    z-index: -1;
+  }
+}
+.footer {
+  min-height: $footer-height;
+  background-color: #fff;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  &__container {
+    margin-top: 3px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  input {
+    height: 40px;
+    width: calc(100% - 40px);
+    padding: 5px 2rem;
+
+    @include main-font();
+    color: map-get($colors, cl-5);
+
+    $cl: #1a535c;
+    $alpha: 0.46;
+    webkit-box-shadow: inset 0px 0px 13px 1pxrgba
+      (red($cl), green($cl), blue($cl), $alpha);
+    -moz-box-shadow: inset 0px 0px 13px 1px
+      rgba(red($cl), green($cl), blue($cl), $alpha);
+    box-shadow: inset 0px 0px 13px 1px
+      rgba(red($cl), green($cl), blue($cl), $alpha);
+
+    outline: none;
+    border: none;
+    border-radius: $f-bor-rad;
+  }
+  ::placeholder {
+    color: map-get($colors, cl-5);
+    opacity: 0.5;
+  }
+  &__btn {
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
+
+    border-radius: 50%;
+
+    position: absolute;
+    top: 0;
+    right: 20px;
+
+    background: linear-gradient(270deg, #4ecdc4 50%, #f7fff7 120%);
+    border: 1px solid rgba(26, 83, 92, 0.25);
+    transform: rotate(90deg);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    svg {
+      fill: #fff;
+      width: 25px;
+      height: 25px;
+      transform: rotate(270deg);
+    }
+  }
+  &__btn:active {
+    transform: rotate(270deg);
+    svg {
+      transform: rotate(-270deg);
+      fill: map-get($colors, cl-2-1);
+    }
+  }
+}

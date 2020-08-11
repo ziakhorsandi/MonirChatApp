@@ -1,0 +1,15 @@
+.login {
+  width: 300px;
+  height: 100%;
+
+  &__avatar {
+    background-color: map-get($colors, cl-5);
+  }
+
+  .ant-card-body {
+    padding: 34px 24px 14px 24px;
+  }
+  .ant-card-bordered {
+    border: solid 1.5px map-get($colors, cl-5);
+  }
+}

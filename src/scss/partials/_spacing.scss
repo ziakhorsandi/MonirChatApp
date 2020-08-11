@@ -1,0 +1,47 @@
+$rems: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 1rem,
+  4: 1.5rem,
+  5: 3rem,
+  "auto": auto,
+);
+$sides: (
+  "": "",
+  "r": "-right",
+  "l": "-left",
+  "t": "-top",
+  "b": "-bottom",
+  "y": "",
+  "x": "",
+);
+@mixin creatSpacing($className, $propName, $grid) {
+  @each $s_key, $s_val in $sides {
+    @each $key, $val in $rems {
+      .#{$className}#{$s_key}#{$grid}-#{$key} {
+        @if ($s_key== "y") {
+          #{$propName}-top: $val !important;
+          #{$propName}-bottom: $val !important;
+        } @else if($s_key== "x") {
+          #{$propName}-left: $val !important;
+          #{$propName}-right: $val !important;
+        } @else {
+          #{$propName}#{$s_val}: $val !important;
+        }
+      }
+    }
+  }
+}
+@include creatSpacing("m", "margin", "");
+@include creatSpacing("p", "padding", "");
+
+@mixin all-mode-spacing($list, $className, $propName) {
+  @each $key, $val in $list {
+    @media screen and (min-width: $val) {
+      @include creatSpacing(#{$className}, $propName, -#{$key});
+    }
+  }
+}
+@include all-mode-spacing($grids, "m", "margin");
+@include all-mode-spacing($grids, "p", "padding");

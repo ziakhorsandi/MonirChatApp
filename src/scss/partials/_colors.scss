@@ -1,0 +1,36 @@
+//--------colors------------
+
+$colors: (
+  cl-1: #ff6b6b,
+  cl-2: #f7fff7,
+  cl-2-1: #1a535c,
+  cl-3: #ffe66d,
+  // cl-3-1: #1a535c,
+    cl-4: #11525c,
+  cl-5: #4ecdc4,
+  cl-6: #1a535c,
+  cl-7: #f7fff7,
+);
+
+//-------------Set the color for a property with rgba()--------------
+@mixin color_set($property_name, $cl, $alpha) {
+  #{$property_name}: rgba(red($cl), green($cl), blue($cl), $alpha);
+}
+//---or use adjust-color() Built-In function
+//adjust-color($color: #000000, $red: 1, $green: 2, $blue: 3,
+//  $hue: 0, $saturation: 0%, $lightness: 0%, $alpha: 1.0)
+
+//-------------Colors-------------
+@mixin create-color-class($name, $propName, $color_list) {
+  @each $key, $val in $color_list {
+    .#{$name}-#{$key} {
+      #{$propName}: $val;
+    }
+  }
+}
+//--------create classes for bakground color---
+@include create-color-class(bg, background-color, $colors);
+//---------create classes for color property---
+@include create-color-class(font, color, $colors);
+//----------fill the svgs ---------------------
+@include create-color-class(fill, fill, $colors);

@@ -1,0 +1,41 @@
+//-------the main font(vazir)----------
+@font-face {
+  font-family: IRANSansWeb-font;
+  src: url("./../../assets/fonts/IRANSans(FaNum)_Medium.ttf");
+}
+@mixin main-font() {
+  font-family: IRANSansWeb-font;
+}
+.main-font {
+  font-family: IRANSansWeb-font;
+}
+
+//_______________________________________________________________
+
+$base_font_size: 12px;
+$base_line_height: 12px;
+
+//creating class for font-size and line height
+@mixin create-font-class($classNamem, $propName) {
+  @for $i from 1 to 3 {
+    @for $j from 0 to 10 {
+      .#{$classNamem}-#{$i}-#{$j} {
+        #{$propName}: #{$i + "." + $j}rem;
+      }
+    }
+  }
+}
+
+// @include create-font-class(line-height, line-height);
+// @include create-font-class(font-size, font-size);
+//----------for all size----------
+
+@mixin all-mode-font($list, $className, $propName) {
+  @each $key, $val in $list {
+    @media screen and (min-width: $val) {
+      @include create-font-class(#{$className}-#{$key}, $propName);
+    }
+  }
+}
+// @include all-mode-font($grids, line-height, line-height);
+// @include all-mode-font($grids, font-size, font-size);

@@ -1,0 +1,12 @@
+.leaflet-marker-icon {
+  span {
+    @include main-font();
+    color: map-get($colors, cl-5);
+  }
+}
+.marker-cluster {
+  background-color: transparent;
+}
+.marker-cluster div {
+  background-color: map-get($colors, cl-1);
+}

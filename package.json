@@ -6,15 +6,20 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "antd": "^4.5.2",
     "react": "^16.13.1",
+    "react-burger-menu": "^2.7.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.1",
+    "socket.io-client": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev-start": "concurrently --kill-others \"less-watch-compiler --config less-watch-compiler.config.json\" \"react-scripts start\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -30,5 +35,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^5.2.0",
+    "less": "^3.12.2",
+    "less-watch-compiler": "^1.14.6",
+    "node-sass": "^4.14.1",
+    "prettier": "^2.0.5"
   }
 }
