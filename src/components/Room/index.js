@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Menu from "../../layout/siderMenu/index";
 import Message from "../../layout/Message/index";
 import { Row } from "antd";
 import { WechatOutlined } from "@ant-design/icons";
+import { useParams, useLocation } from "react-router-dom";
+
+import soketIoClient from "socket.io-client";
 
 import { ReactComponent as SendLogo } from "../../assets/images/send.svg";
 import { ReactComponent as MenuLogo } from "../../assets/images/menu.svg";
 
-const Header = ({ onMenuClick }) => {
+const ENDPOINT = "http://localhost:5000";
+// const ENDPOINT = "http://zikdemo.ir";
+
+const Header = ({ onMenuClick, title }) => {
   return (
     <div className="header">
       <div className="header__container">
@@ -15,7 +21,7 @@ const Header = ({ onMenuClick }) => {
           <div className="header__avatar mr-3">
             <WechatOutlined />
           </div>
-          <div className="header__txt">Room Name</div>
+          <div className="header__txt">{title} Room</div>
           <div
             className="header__logo ml-auto"
             onClick={() => {
@@ -30,24 +36,95 @@ const Header = ({ onMenuClick }) => {
     </div>
   );
 };
-const Footer = () => {
+const Footer = ({ submit }) => {
+  const [inputVal, setInputVal] = useState("");
+  const send = () => {
+    let val = inputVal.trim();
+    if (val) {
+      submit(val);
+      setInputVal("");
+    }
+  };
   return (
     <div className="footer">
       <Row className="footer__container" justify="center" align="middle">
-        <div className="footer__btn">
+        <div
+          className="footer__btn"
+          onClick={() => {
+            send();
+          }}
+        >
           <SendLogo></SendLogo>
         </div>
-        <input type="text" placeholder="Message..." />
+        <input
+          value={inputVal}
+          type="text"
+          placeholder="Message..."
+          onChange={(e) => {
+            setInputVal(e.target.value);
+          }}
+          onKeyUp={(e) => {
+            if (e.keyCode === 13) {
+              send();
+            }
+          }}
+        />
       </Row>
     </div>
   );
 };
 
-const Index = () => {
+const Index = (props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [txtArr, setTxtArr] = useState([]);
+  const [roomUsers, setRoomUsers] = useState([]);
+  const [myId, setMyId] = useState("");
+  const socketRef = useRef(null);
+
+  const queryString = new URLSearchParams(props.history.location.search);
+
+  useEffect(() => {
+    const socket = soketIoClient(ENDPOINT, { path: "/app" });
+    socketRef.current = socket;
+
+    //JOIN CHATROOM
+    socket.emit("joinRoom", {
+      userName: queryString.get("user"),
+      room: queryString.get("room"),
+    });
+    socket.on("giveMeid", (msg) => {
+      setMyId(msg.id);
+    });
+    socket.on("message", (message) => {
+      setTxtArr((txtArr) => [
+        ...txtArr,
+        {
+          id: message.id,
+          txt: message.text,
+          time: message.time,
+          user: message.userName,
+        },
+      ]);
+      //SCROLL TO END OF THER PAGE
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    socket.on("roomUsers", ({ room, users }) => {
+      console.log("room", room);
+      console.log("users", users);
+      setRoomUsers(users);
+    });
+
+    return () => socket.disconnect();
+  }, []);
+  //_________________________________________________________
   const openClose = () => {
     setIsOpen(!isOpen);
   };
+  const submitText = (val) => {
+    socketRef.current.emit("chatMessage", val);
+  };
+  //_________________________________________________________
   return (
     <>
       <div id="outer-container" className="room">
@@ -63,56 +140,30 @@ const Index = () => {
             setIsOpen(false);
           }}
           closeClick={openClose}
+          users={roomUsers}
         />
         <main id="page-wrap">
-          <Header onMenuClick={openClose}></Header>
+          <Header
+            onMenuClick={openClose}
+            title={queryString.get("room")}
+          ></Header>
           <div className="room__context px-3 px-sm-5">
-            <Message
-              txt="لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد."
-              userName="Zia Khorsandi"
-              time="9:05"
-              isOthers={false}
-            ></Message>
-            <Message
-              txt="لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد. یک نمونه است"
-              // txt="this is a test"
-              userName="Zia Khorsandi"
-              time="9:05"
-              isOthers={true}
-            ></Message>
-            <Message
-              txt="دنیای موجود طراحی"
-              userName="Zia Khorsandi"
-              time="9:05"
-              isOthers={false}
-            ></Message>
-            <Message
-              txt="دستاوردهای اصلی، و جوابگوی سوالات"
-              userName="Zia Khorsandi"
-              time="9:05"
-              isOthers={true}
-            ></Message>
-            <Message
-              txt="حروفچینی دستاوردهای اصلی،"
-              userName="Zia Khorsandi"
-              time="9:05"
-              isOthers={true}
-            ></Message>
-            <Message
-              txt="لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد."
-              userName="Zia Khorsandi"
-              time="9:05"
-              isOthers={false}
-            ></Message>
-            <Message
-              txt="لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد. یک نمونه است"
-              // txt="this is a test"
-              userName="Zia Khorsandi"
-              time="9:05"
-              isOthers={true}
-            ></Message>
+            {txtArr.map((elem) => {
+              // console.log("!(elem.id === myId)", !(elem.id === myId));
+              // console.log("myId", myId);
+              // console.log("elem.id", elem.id);
+
+              return (
+                <Message
+                  txt={elem.txt}
+                  userName={elem.user}
+                  time={elem.time}
+                  isOthers={!(elem.id === myId)}
+                ></Message>
+              );
+            })}
           </div>
-          <Footer></Footer>
+          <Footer submit={submitText}></Footer>
         </main>
       </div>
     </>

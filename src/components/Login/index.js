@@ -1,11 +1,28 @@
-import React from "react";
-import { Card, Select, Row, Col, Avatar, Input, Button, Divider } from "antd";
+import React, { useState } from "react";
+import {
+  Card,
+  Select,
+  Row,
+  Col,
+  Avatar,
+  Input,
+  Button,
+  Divider,
+  message,
+} from "antd";
 import { UserOutlined, WechatOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
 
 const { Option } = Select;
 
-function index(props) {
-  const handleChange = () => {};
+function Index(props) {
+  const handleChange = (e) => {
+    console.log("e", e);
+  };
+  const [userInput, setUserInput] = useState("");
+  const [roomInput, setRoomInput] = useState("");
+  const history = useHistory();
+
   return (
     <Row align="middle" className="login m-auto">
       <Col span={24}>
@@ -17,7 +34,14 @@ function index(props) {
                   <Avatar className="login__avatar" icon={<UserOutlined />} />
                 </Col>
                 <Col span={18}>
-                  <Input placeholder="User Name ..." className="w-100" />
+                  <Input
+                    placeholder="User Name ..."
+                    className="w-100"
+                    value={userInput}
+                    onChange={(e) => {
+                      setUserInput(e.target.value);
+                    }}
+                  />
                 </Col>
               </Row>
             </Col>
@@ -27,15 +51,14 @@ function index(props) {
                   <Avatar className="login__avatar" icon={<WechatOutlined />} />
                 </Col>
                 <Col span={18}>
-                  <Select
-                    defaultValue="PHP"
-                    onChange={handleChange}
+                  <Input
+                    placeholder="Room Name ..."
                     className="w-100"
-                  >
-                    <Option key={1}>PHP</Option>
-                    <Option key={2}>JavaScript</Option>
-                    <Option key={3}>NodeJs</Option>
-                  </Select>
+                    value={roomInput}
+                    onChange={(e) => {
+                      setRoomInput(e.target.value);
+                    }}
+                  />
                 </Col>
               </Row>
             </Col>
@@ -46,7 +69,19 @@ function index(props) {
                 className="m-auto"
                 style={{ color: "#000" }}
                 onClick={() => {
-                  props.history.push("/room");
+                  let user = userInput.trim();
+                  let room = roomInput.trim();
+                  if (!user) {
+                    message.error("User name is not valid");
+                    setUserInput("");
+                    return;
+                  }
+                  if (!room) {
+                    message.error("Room name in not valid");
+                    setRoomInput("");
+                    return;
+                  }
+                  history.push(`/room?user=${user}&room=${room}`);
                 }}
               >
                 Go to ChatRoom
@@ -59,4 +94,4 @@ function index(props) {
   );
 }
 
-export default index;
+export default Index;

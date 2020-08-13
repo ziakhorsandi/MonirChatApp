@@ -31,7 +31,7 @@ function App() {
         <h2>{show}</h2>
       </div> */}
       <Switch>
-        <Route path="/room" component={Room}></Route>
+        <Route path="/room/:search?" component={Room}></Route>
         <Route path="/" component={Login}></Route>
       </Switch>
     </Router>

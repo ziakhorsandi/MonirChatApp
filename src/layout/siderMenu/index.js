@@ -41,8 +41,9 @@ function Index(props) {
       </div>
       <div className="menu__content">
         <Row className="flex-column py-5 pr-2 pl-4">
-          <Users userName="Zia Khorsandi"></Users>
-          <Users userName="Monire Moayedi"></Users>
+          {props.users.map((elem) => (
+            <Users userName={elem.userName}></Users>
+          ))}
         </Row>
       </div>
     </Menu>
